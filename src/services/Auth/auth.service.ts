@@ -11,20 +11,36 @@ export const register = (username: string, email: string, password: string) => {
     });
 };
 
-export const login = (username: string, password: string) => {
-    return axios
+export const login = async (username: string, password: string) => {
+    let response = await axios
         .post(AIP_AUTH_URL + "login", {
                 email: username,
                 password: password,
             },
-        )
-        .then((response) => {
-            if (response.data.accessToken) {
-                localStorage.setItem("user", JSON.stringify(response.data));
-            }
+        );
+    if (response.data.accessToken) {
+        localStorage.setItem("user", JSON.stringify(response.data));
+    }
+    return response.data;
+};
 
-            return response.data;
+export const refresh = async (refreshToken: string) => {
+    let response = await axios
+        .post(AIP_AUTH_URL + "refresh", {
+            refreshToken: refreshToken,
         });
+    if (response.status === 200 && response.data && response.data.accessToken) {
+        const accessToken = response.data.accessToken;
+        const refreshToken = response.data.refreshToken;
+
+        localStorage.setItem('user', JSON.stringify({
+            ...JSON.parse(localStorage.getItem('user') || '{}'),
+            accessToken,
+            refreshToken
+        }));
+        return true;
+    }
+    return false;
 };
 
 export const logout = () => {
