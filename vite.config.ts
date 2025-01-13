@@ -20,8 +20,8 @@ export default defineConfig({
             pfx: fs.readFileSync(path.resolve(__dirname, pfxPath)),
             passphrase: passphrase
         },
-        define: {
-            'process.env.VITE_API_URL': JSON.stringify(process.env.VITE_API_URL),
-        },
-    }
+    },
+    define: {
+        'process.env.VITE_API_URL': JSON.stringify(process.env.VITE_API_URL),
+    },
 })
